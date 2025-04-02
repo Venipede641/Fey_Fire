@@ -24,7 +24,7 @@
   "physicsShapePoints":[],
   "physicsStartAwake":true,
   "properties":[
-    {"$GMObjectProperty":"v1","%Name":"gravity","filters":[],"listItems":[],"multiselect":false,"name":"gravity","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"2.5","varType":0,},
+    {"$GMObjectProperty":"v1","%Name":"gravity","filters":[],"listItems":[],"multiselect":false,"name":"gravity","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"2.25","varType":0,},
     {"$GMObjectProperty":"v1","%Name":"player_jump_power","filters":[],"listItems":[],"multiselect":false,"name":"player_jump_power","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"-43","varType":0,},
     {"$GMObjectProperty":"v1","%Name":"player_move_speed","filters":[],"listItems":[],"multiselect":false,"name":"player_move_speed","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"20","varType":0,},
   ],
