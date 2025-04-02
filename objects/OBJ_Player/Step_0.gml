@@ -3,6 +3,7 @@
 var space = keyboard_check(vk_space)
 var left = keyboard_check(vk_left)
 var right = keyboard_check(vk_right)
+var shift = keyboard_check(vk_shift)
 
 if(left)
 {
@@ -26,6 +27,11 @@ if(space && grounded)
 }
 
 y_velocity += OBJ_Game_Controller_Player.gravity
+
+if(shift)
+{
+	x_velocity = x_velocity* 1.5	
+}
 
 //updates player's position
 predicted_x = x+x_velocity
