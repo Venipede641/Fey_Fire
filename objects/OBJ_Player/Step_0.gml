@@ -1,5 +1,5 @@
 /// @description handles player movement
-// You can write your code in this editor
+
 var space = keyboard_check(vk_space)
 var left = keyboard_check(ord("A"))
 var right = keyboard_check(ord("D"))
@@ -16,25 +16,56 @@ var ycollison
 //0 = normal movement
 //1 = dashing
 //2 = grappling
+//3 = wall hang
 switch(player_state)
 {
 case 0:
-
+	if(x_velocity > max_move_speed) //if player is oving faster than they can walk I. E dashing or grapple, slow them down
+	{
+		if(post_dash_drag_enabled)
+		{
+			x_velocity -= post_dash_drag
+		}
+		else
+		{	
+			x_velocity -= drag
+		}
+	}
+	else if (x_velocity < -max_move_speed)
+	{
+		if(post_dash_drag_enabled)
+		{
+			x_velocity += post_dash_drag
+		}
+		else
+		{	
+			x_velocity += drag
+		}
+	}
 	if(left)
 	{
-		x_velocity = -OBJ_Game_Controller_Player.player_move_speed
+		if (x_velocity > -max_move_speed)
+		{
+			x_velocity -= acceleration
+		}
 		facing = 0 //facing left
 	}
 
 	if(right)
 	{
-		x_velocity = OBJ_Game_Controller_Player.player_move_speed
+		if (x_velocity < max_move_speed)
+		{
+			x_velocity += acceleration
+		}
 		facing = 1 //facing right
 	}
 
 	if(!right&&!left)
 	{
-		x_velocity = 0
+		if(grounded)
+		{
+			x_velocity = 0
+		}
 	}
 
 	if(space && grounded)
@@ -49,7 +80,9 @@ case 0:
 	{
 		player_state = 1 //enters dash movement
 		can_dash = false // locks player out of dashing until they hit the ground again
+		post_dash_drag_enabled = true
 		alarm[0] = .1 * game_get_speed(gamespeed_fps) //alarm to set dashing to false
+		alarm[1] = .25 * game_get_speed(gamespeed_fps)
 	}
 	
 	if(graple_start)
@@ -131,9 +164,10 @@ case 0:
 	}
 	else
 	{
+		grounded = false
 		var arrow = instance_nearest(x,y,OBJ_Grappling_Hook_Arrow)	
 		
-		var gy = arrow.x
+		var gy = arrow.y
 		var gx = arrow.x
 
 		var relative_x = gx-x
@@ -154,11 +188,13 @@ case 0:
 
 		//x position
 		xcollison = instance_place(predicted_x,y,OBJ_Floor_Master)
+		var xgrcollison = instance_place(predicted_x,y,OBJ_Grappling_Hook_Arrow)
 
 		move_and_collide(x_velocity,0,OBJ_Floor_Master)
 
 		//y position
 		ycollison = instance_place(x,predicted_y,OBJ_Floor_Master)
+		var ygrcollison = instance_place(x,predicted_y,OBJ_Grappling_Hook_Arrow)
 
 		if(ycollison != noone)
 		{
@@ -170,6 +206,19 @@ case 0:
 		{
 			move_and_collide(0,y_velocity,OBJ_Floor_Master)
 		}
+		
+		if(instance_place(x,y,OBJ_Grappling_Hook_Arrow))
+		{
+			player_state = 3
+		}
+		
+	}
+	break
+	
+	case 3:// wall hold, for holding place during grapple
+	if(!graple_hold) //if the player lets go of the key
+	{
+		player_state =0	//return to normal movement
 	}
 	break
 }
