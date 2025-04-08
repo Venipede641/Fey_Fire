@@ -7,6 +7,7 @@ var graple_start = keyboard_check_pressed(ord("Q"))
 var graple_hold = keyboard_check(ord("Q"))
 var graple_release = keyboard_check_released(ord("Q"))
 var shift = keyboard_check_pressed(vk_shift)
+var shoot = mouse_check_button(mb_left)
 
 var predicted_x
 var predicted_y
@@ -145,6 +146,30 @@ case 0:
 		arrow.returning = true
 		}
 	}
+	if(shoot && can_shoot){
+		
+		can_shoot = false
+		alarm[2] = .25 * game_get_speed(gamespeed_fps)
+		
+		var gy = mouse_y
+		var gx = mouse_x
+
+		var bullet = instance_create_layer(OBJ_Player.x,OBJ_Player.y,"instances",OBJ_Bullet)
+
+		var relative_x = gx-x
+		var relative_y = gy-y
+
+		var trajectory = point_direction(gx,gy,x,y)
+		var radiens = (trajectory - 90) * (pi/180)
+
+		var x_multiplier = sin(radiens)
+		var y_multiplier = cos(radiens)
+
+		bullet.direction = trajectory
+		bullet.image_angle = bullet.direction -180
+		bullet.x_velocity = bullet_velocity * x_multiplier
+		bullet.y_velocity = bullet_velocity * y_multiplier	
+	}
 		
 	//updates player's position
 	predicted_x = x+x_velocity
@@ -243,15 +268,65 @@ case 0:
 			instance_destroy(arrow)
 			player_state = 3
 		}
+		if(shoot && can_shoot){
+		
+		can_shoot = false
+		alarm[2] = .25 * game_get_speed(gamespeed_fps)
+		
+		var gy = mouse_y
+		var gx = mouse_x
+
+		var bullet = instance_create_layer(OBJ_Player.x,OBJ_Player.y,"instances",OBJ_Bullet)
+
+		relative_x = gx-x
+		relative_y = gy-y
+
+		trajectory = point_direction(gx,gy,x,y)
+		radiens = (trajectory - 90) * (pi/180)
+
+		x_multiplier = sin(radiens)
+		y_multiplier = cos(radiens)
+
+		bullet.direction = trajectory
+		bullet.image_angle = bullet.direction -180
+		bullet.x_velocity = bullet_velocity * x_multiplier
+		bullet.y_velocity = bullet_velocity * y_multiplier	
+	}
 		
 	}
 	break
 	
 	case 3:// wall hold, for holding place during grapple
+	x_velocity = 0
+	y_velocity = 0
 	if(!graple_hold) //if the player lets go of the key
 	{
 		player_state =0	//return to normal movement
 		can_grapple = true
+	}
+	if(shoot && can_shoot){
+		
+		can_shoot = false
+		alarm[2] = .25 * game_get_speed(gamespeed_fps)
+		
+		var gy = mouse_y
+		var gx = mouse_x
+
+		var bullet = instance_create_layer(OBJ_Player.x,OBJ_Player.y,"instances",OBJ_Bullet)
+
+		var relative_x = gx-x
+		var relative_y = gy-y
+
+		var trajectory = point_direction(gx,gy,x,y)
+		var radiens = (trajectory - 90) * (pi/180)
+
+		var x_multiplier = sin(radiens)
+		var y_multiplier = cos(radiens)
+
+		bullet.direction = trajectory
+		bullet.image_angle = bullet.direction -180
+		bullet.x_velocity = bullet_velocity * x_multiplier
+		bullet.y_velocity = bullet_velocity * y_multiplier	
 	}
 	break
 }
