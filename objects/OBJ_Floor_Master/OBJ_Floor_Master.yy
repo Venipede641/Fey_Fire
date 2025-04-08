@@ -6,8 +6,8 @@
   "name":"OBJ_Floor_Master",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objects",
-    "path":"folders/Objects.yy",
+    "name":"level_Geometrey",
+    "path":"folders/Objects/level_Geometrey.yy",
   },
   "parentObjectId":null,
   "persistent":false,

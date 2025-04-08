@@ -5,6 +5,7 @@ var left = keyboard_check(ord("A"))
 var right = keyboard_check(ord("D"))
 var graple_start = keyboard_check_pressed(ord("Q"))
 var graple_hold = keyboard_check(ord("Q"))
+var graple_release = keyboard_check_released(ord("Q"))
 var shift = keyboard_check_pressed(vk_shift)
 
 var predicted_x
@@ -30,6 +31,10 @@ case 0:
 		{	
 			x_velocity -= drag
 		}
+		if(x_velocity < max_move_speed)
+		{
+			x_velocity = max_move_speed	
+		}
 	}
 	else if (x_velocity < -max_move_speed)
 	{
@@ -40,6 +45,10 @@ case 0:
 		else
 		{	
 			x_velocity += drag
+		}
+		if(x_velocity > max_move_speed)
+		{
+			x_velocity = -max_move_speed	
 		}
 	}
 	if(left)
@@ -74,8 +83,16 @@ case 0:
 		grounded = false
 	}
 
-	y_velocity += OBJ_Game_Controller_Player.gravity
-
+	if(y_velocity < max_fall_speed)
+	{
+		y_velocity += OBJ_Game_Controller_Player.gravity
+		
+		if(y_velocity > max_fall_speed)
+		{
+			y_velocity = max_fall_speed	
+		}	
+	}
+	
 	if(shift&&can_dash)
 	{
 		player_state = 1 //enters dash movement
@@ -85,12 +102,15 @@ case 0:
 		alarm[1] = .25 * game_get_speed(gamespeed_fps)
 	}
 	
-	if(graple_start)
+	if(graple_start && can_grapple)
 		{
+		can_grapple = false
+			
 		var gy = mouse_y
 		var gx = mouse_x
 
 		var arrow = instance_create_layer(OBJ_Player.x,OBJ_Player.y,"instances",OBJ_Grappling_Hook_Arrow)
+		instance_create_layer(OBJ_Player.x,OBJ_Player.y,"instances",OBJ_Grapling_Rope)
 
 		var relative_x = gx-x
 		var relative_y = gy-y
@@ -110,13 +130,20 @@ case 0:
 	if(graple_hold)
 	{
 		var arrow = instance_nearest(x,y,OBJ_Grappling_Hook_Arrow)	
-		if(!arrow.in_flight)
+		if(arrow != noone)
+		{
+		if(!arrow.in_flight && !arrow.returning)
 		{
 			player_state = 2 //set movement state to grappling	
 		}
+		}
 	}
-	else{
-		instance_destroy(OBJ_Grappling_Hook_Arrow)
+	if(graple_release){
+		var arrow = instance_nearest(x,y,OBJ_Grappling_Hook_Arrow)
+		if(arrow != noone)
+		{
+		arrow.returning = true
+		}
 	}
 		
 	//updates player's position
@@ -133,10 +160,10 @@ case 0:
 
 	if(ycollison != noone)
 	{
-	move_and_collide(0,y_velocity,OBJ_Floor_Master)
-	y_velocity = 0
-	grounded = true
-	can_dash = true
+		move_and_collide(0,y_velocity,OBJ_Floor_Master)
+		y_velocity = 0
+		grounded = true
+		can_dash = true
 	}
 	else
 	{
@@ -145,7 +172,9 @@ case 0:
 	break;
 	
 	case 1: //dashing
-
+	
+	y_velocity = 0
+	
 	if(facing == 1) //if facing right
 	{
 		x_velocity = dash_velocity
@@ -158,14 +187,16 @@ case 0:
 	break;
 
 	case 2: //grappling
+	
+	var arrow = instance_nearest(x,y,OBJ_Grappling_Hook_Arrow)
 	if(!graple_hold) //if the player lets go of the key
 	{
 		player_state =0	//return to normal movement
+		arrow.returning = true	
 	}
 	else
 	{
 		grounded = false
-		var arrow = instance_nearest(x,y,OBJ_Grappling_Hook_Arrow)	
 		
 		var gy = arrow.y
 		var gx = arrow.x
@@ -209,6 +240,7 @@ case 0:
 		
 		if(instance_place(x,y,OBJ_Grappling_Hook_Arrow))
 		{
+			instance_destroy(arrow)
 			player_state = 3
 		}
 		
@@ -219,6 +251,7 @@ case 0:
 	if(!graple_hold) //if the player lets go of the key
 	{
 		player_state =0	//return to normal movement
+		can_grapple = true
 	}
 	break
 }
