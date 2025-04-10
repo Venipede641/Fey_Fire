@@ -7,21 +7,14 @@ if(in_flight && !returning)
 	var predicted_y = y+y_velocity
 
 	//x position
-	var xcollison = instance_place(predicted_x,y,OBJ_Floor_Master)
+	var collison = collision_line(x,y,predicted_x,predicted_y,OBJ_Floor_Master,true,true)
 
-	if(xcollison != noone)
+	if(collison != noone)
 	{
 		in_flight = false
 	}
+	
 	move_and_collide(x_velocity,0,OBJ_Floor_Master)
-
-	//y position
-	var ycollison = instance_place(x,predicted_y,OBJ_Floor_Master)
-
-	if(ycollison != noone)
-	{
-		in_flight = false
-	}
 	move_and_collide(0,y_velocity,OBJ_Floor_Master)
 }
 else if(returning)
