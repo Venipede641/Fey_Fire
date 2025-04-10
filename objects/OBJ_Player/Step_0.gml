@@ -119,7 +119,7 @@ case 0:
 	{
 		if(wall_slide)
 		{
-			y_velocity += OBJ_Game_Controller_Player.player_jump_power
+			y_velocity = OBJ_Game_Controller_Player.player_jump_power
 			x_velocity = wall_jump_velocity * wall_jump_direction
 			can_control = false
 			alarm[3] = .1 * game_get_speed(gamespeed_fps)
