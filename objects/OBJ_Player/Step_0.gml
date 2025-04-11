@@ -242,7 +242,15 @@ case 0:
 	//x position
 	xcollison = instance_place(predicted_x,y,OBJ_Floor_Master)
 
-	move_and_collide(x_velocity,0,OBJ_Floor_Master)
+	if(xcollison != noone)
+		{
+			move_and_collide(x_velocity,0,OBJ_Floor_Master)
+			x_velocity = 0
+		}
+		else
+		{
+			move_and_collide(x_velocity,0,OBJ_Floor_Master)
+		}
 
 	//y position
 	ycollison = instance_place(x,predicted_y,OBJ_Floor_Master)
@@ -310,7 +318,15 @@ case 0:
 		xcollison = instance_place(predicted_x,y,OBJ_Floor_Master)
 		var xgrcollison = instance_place(predicted_x,y,OBJ_Grappling_Hook_Arrow)
 
-		move_and_collide(x_velocity,0,OBJ_Floor_Master)
+		if(xcollison != noone)
+		{
+			move_and_collide(x_velocity,0,OBJ_Floor_Master)
+			x_velocity = 0
+		}
+		else
+		{
+			move_and_collide(x_velocity,0,OBJ_Floor_Master)
+		}
 
 		//y position
 		ycollison = instance_place(x,predicted_y,OBJ_Floor_Master)
