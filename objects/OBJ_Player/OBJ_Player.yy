@@ -57,6 +57,7 @@
     {"$GMObjectProperty":"v1","%Name":"movement_speed_multiplier","filters":[],"listItems":[],"multiselect":false,"name":"movement_speed_multiplier","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"0","varType":0,},
     {"$GMObjectProperty":"v1","%Name":"wall_slide_speed","filters":[],"listItems":[],"multiselect":false,"name":"wall_slide_speed","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"7.5","varType":0,},
     {"$GMObjectProperty":"v1","%Name":"hazard_interaction_range","filters":[],"listItems":[],"multiselect":false,"name":"hazard_interaction_range","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"800","varType":0,},
+    {"$GMObjectProperty":"v1","%Name":"current_weapon","filters":[],"listItems":[],"multiselect":false,"name":"current_weapon","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"0","varType":0,},
   ],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
