@@ -16,7 +16,13 @@ var ycollison
 
 if(y_velocity > 0) //if player is falling they are (probably) not grounded
 {
-	grounded = false	
+	grounded = false
+	falling = true
+}
+else if(y_velocity < 0)
+{
+	grounded = false
+	falling = false
 }
 
 var hazardList = ds_list_create();
@@ -73,15 +79,6 @@ case 0:
 	}
 	if(left && can_control)
 	{
-		if(instance_place(x-5,y,OBJ_Floor_Master) != noone && !grounded)
-		{
-			wall_jump_direction = 1
-			wall_slide = 1
-		}
-		else{
-			wall_jump_direction = 0
-			wall_slide = 0
-		}
 		if (x_velocity > -max_move_speed)
 		{
 			x_velocity -= acceleration
@@ -91,15 +88,6 @@ case 0:
 
 	if(right && can_control)
 	{
-		if(instance_place(x+5,y,OBJ_Floor_Master) != noone && !grounded)
-		{
-			wall_jump_direction = -1
-			wall_slide = 1
-		}
-		else{
-			wall_jump_direction = 0
-			wall_slide = 0
-		}
 		if (x_velocity < max_move_speed)
 		{
 			x_velocity += acceleration
@@ -114,6 +102,23 @@ case 0:
 			x_velocity = 0
 		}
 	}
+	
+	
+		if(instance_place(x-5,y,OBJ_Floor_Master) != noone && !grounded && falling)
+		{
+			wall_jump_direction = 1
+			wall_slide = 1
+		}
+		else if(instance_place(x+5,y,OBJ_Floor_Master) != noone && !grounded && falling)
+		{
+			wall_jump_direction = -1
+			wall_slide = 1	
+		}
+		else
+		{
+			wall_jump_direction = 0
+			wall_slide = 0
+		}
 
 	if(space && can_control)
 	{
@@ -261,6 +266,7 @@ case 0:
 		y_velocity = 0
 		grounded = true
 		can_dash = true
+		falling = false
 	}
 	else
 	{

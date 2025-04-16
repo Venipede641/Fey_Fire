@@ -1,4 +1,4 @@
-/// @description perform logic on player's current animation state and apply it
+/// @description perform logic on player's current animation state
 
 // animation state key
 // 0: idle emptyhanded
