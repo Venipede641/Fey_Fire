@@ -16,12 +16,10 @@ var ycollison
 
 if(y_velocity > 0) //if player is falling they are (probably) not grounded
 {
-	grounded = false
 	falling = true
 }
-else if(y_velocity < 0)
+if(y_velocity < 0) //if player is falling they are (probably) not grounded
 {
-	grounded = false
 	falling = false
 }
 
@@ -247,31 +245,76 @@ case 0:
 	//x position
 	xcollison = instance_place(predicted_x,y,OBJ_Floor_Master)
 
-	if(xcollison != noone)
+	if(xcollison == noone)
 		{
 			move_and_collide(x_velocity,0,OBJ_Floor_Master)
-			x_velocity = 0
 		}
-		else
+	else
 		{
-			move_and_collide(x_velocity,0,OBJ_Floor_Master)
+			switch(xcollison.terrain_type)
+			{
+				case 0:
+				move_and_collide(x_velocity,0,OBJ_Floor_Master)
+				x_velocity = 0
+				break
+				
+				case 1:
+				x = predicted_x
+				break
+			}
+			
 		}
 
 	//y position
 	ycollison = instance_place(x,predicted_y,OBJ_Floor_Master)
 
-	if(ycollison != noone)
+	if(ycollison == noone)
 	{
 		move_and_collide(0,y_velocity,OBJ_Floor_Master)
-		y_velocity = 0
-		grounded = true
-		can_dash = true
-		falling = false
 	}
 	else
 	{
-		move_and_collide(0,y_velocity,OBJ_Floor_Master)
+		switch(ycollison.terrain_type)
+			{
+				case 0:
+				move_and_collide(0,y_velocity,OBJ_Floor_Master)
+				y_velocity = 0
+				grounded = true
+				falling = false
+				break
+				
+				case 1:
+				if (y_velocity >= 0)
+				{
+					var _platform = instance_place(x, y +y_velocity, OBJ_One_Way_Platform)
+					if (_platform != noone)
+					{
+						if (bbox_bottom <= _platform.bbox_top)
+						{
+	                       move_and_collide(0,y_velocity,OBJ_Floor_Master)
+							y_velocity = 0
+							can_dash = true
+							grounded = true
+							falling = false
+						}
+						else
+						{
+							y += y_velocity
+						}	
+					}
+
+				}
+				else
+				{
+					y += y_velocity
+				}
+				break
+			}
 	}
+	
+	//round numbers to prevent issues
+	y = round(y)
+	x = round(x)
 	break;
 	
 	case 1: //dashing
@@ -287,6 +330,9 @@ case 0:
 		x_velocity = -dash_velocity
 	}
 	move_and_collide(x_velocity,0,OBJ_Floor_Master)
+	//round numbers to prevent issues
+	y = round(y)
+	x = round(x)
 	break;
 
 	case 2: //grappling
@@ -379,9 +425,12 @@ case 0:
 		bullet.image_angle = bullet.direction -180
 		bullet.x_velocity = bullet_velocity * x_multiplier
 		bullet.y_velocity = bullet_velocity * y_multiplier	
-	}
+		}
 		
 	}
+	//round numbers to prevent issues
+	y = round(y)
+	x = round(x)
 	break
 	
 	case 3:// wall hold, for holding place during grapple
@@ -416,6 +465,9 @@ case 0:
 		bullet.x_velocity = bullet_velocity * x_multiplier
 		bullet.y_velocity = bullet_velocity * y_multiplier	
 	}
+	//round numbers to prevent issues
+	y = round(y)
+	x = round(x)
 	break
 }
 
