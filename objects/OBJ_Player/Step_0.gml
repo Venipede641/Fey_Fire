@@ -1,28 +1,23 @@
 /// @description handles player movement
 
+//gather inputs
 var space = keyboard_check_pressed(vk_space)
 var left = keyboard_check(ord("A"))
 var right = keyboard_check(ord("D"))
+var down = keyboard_check(ord("S"))
 var graple_start = keyboard_check_pressed(ord("Q"))
 var graple_hold = keyboard_check(ord("Q"))
 var graple_release = keyboard_check_released(ord("Q"))
 var shift = keyboard_check_pressed(vk_shift)
 var shoot = mouse_check_button(mb_left)
 
+//declare variables
 var predicted_x
 var predicted_y
 var xcollison 
 var ycollison
 
-if(y_velocity > 0) //if player is falling they are (probably) not grounded
-{
-	falling = true
-}
-if(y_velocity < 0) //if player is falling they are (probably) not grounded
-{
-	falling = false
-}
-
+//get all hazards near the player and store them in a list
 var hazardList = ds_list_create();
 var hazardNum = collision_circle_list(x, y, hazard_interaction_range, hazard_master, false, true, hazardList, true);
 if (hazardNum > 0)
@@ -47,67 +42,63 @@ switch(player_state)
 case 0:
 	if(x_velocity > max_move_speed) //if player is oving faster than they can walk I. E dashing or grapple, slow them down
 	{
-		if(post_dash_drag_enabled)
+		if(post_dash_drag_enabled) //after dashing drag is higher to slow them down aftr the burst of speed
 		{
 			x_velocity -= post_dash_drag
 		}
-		else
+		else //otherwise slow by normal
 		{	
 			x_velocity -= drag
-		}
-		if(x_velocity < max_move_speed)
-		{
-			x_velocity = max_move_speed	
 		}
 	}
 	else if (x_velocity < -max_move_speed)
 	{
-		if(post_dash_drag_enabled)
+		if(post_dash_drag_enabled) //after dashing drag is higher to slow them down aftr the burst of speed
 		{
 			x_velocity += post_dash_drag
 		}
-		else
+		else //otherwise slow by normal
 		{	
 			x_velocity += drag
 		}
-		if(x_velocity > max_move_speed)
-		{
-			x_velocity = -max_move_speed	
-		}
 	}
-	if(left && can_control)
+	if(left && can_control) //start moveing player left
 	{
-		if (x_velocity > -max_move_speed)
+		x_velocity -= acceleration
+		if (x_velocity < -max_move_speed)
 		{
-			x_velocity -= acceleration
+			x_velocity = -max_move_speed
 		}
 		facing = 0 //facing left
 	}
 
-	if(right && can_control)
+	if(right && can_control) //start moving player right
 	{
-		if (x_velocity < max_move_speed)
+		x_velocity += acceleration
+		if (x_velocity > max_move_speed)
 		{
-			x_velocity += acceleration
+			x_velocity = max_move_speed
 		}
 		facing = 1 //facing right
 	}
 
-	if(!right&&!left)
+	if(!right&&!left) //stop player if no movement key is held
 	{
+		
+		// [TO DO, CHANGE THIS TO A RAPID DECELERATION INSTEAD OF A FLAT STOP]
 		if(grounded)
 		{
 			x_velocity = 0
 		}
 	}
 	
-	
-		if(instance_place(x-5,y,OBJ_Floor_Master) != noone && !grounded && falling)
+	//wall jumps, if the player is close to a wall, enter a wall slide state where a wall jump can be inputed
+		if(CollisonChecker(-5,0) == true && !grounded && falling)
 		{
 			wall_jump_direction = 1
 			wall_slide = 1
 		}
-		else if(instance_place(x+5,y,OBJ_Floor_Master) != noone && !grounded && falling)
+		else if(CollisonChecker(5,0) == true && !grounded && falling)
 		{
 			wall_jump_direction = -1
 			wall_slide = 1	
@@ -118,10 +109,9 @@ case 0:
 			wall_slide = 0
 		}
 
-	if(space && can_control)
-	{
-		if(wall_slide)
-		{
+	//jumping
+	if(space && can_control){
+		if(wall_slide){
 			y_velocity = OBJ_Game_Controller_Player.player_jump_power
 			x_velocity = wall_jump_velocity * wall_jump_direction
 			can_control = false
@@ -130,14 +120,18 @@ case 0:
 			wall_jump_direction = 0
 			can_dash = true
 		}
-		else if (grounded){
-		y_velocity += OBJ_Game_Controller_Player.player_jump_power
-		grounded = false
+		else if (grounded){ // [TO-DO, rewrite for a dynamic jump where you can short hop]
+			if(down){
+				y += 1
+			}
+			else{
+				y_velocity += OBJ_Game_Controller_Player.player_jump_power
+			}
 		}
 	}
 	
-	if(shift&&can_dash && can_control)
-	{
+	//dashing
+	if(shift&&can_dash && can_control){
 		player_state = 1 //enters dash movement
 		can_dash = false // locks player out of dashing until they hit the ground again
 		post_dash_drag_enabled = true
@@ -145,8 +139,8 @@ case 0:
 		alarm[1] = .25 * game_get_speed(gamespeed_fps)
 	}
 	
-	if(graple_start && can_grapple && can_control)
-		{
+	//launch a grapple hook
+	if(graple_start && can_grapple && can_control){
 		can_grapple = false
 			
 		var gy = mouse_y
@@ -170,26 +164,26 @@ case 0:
 		arrow.y_velocity = Grapling_hook_velocity * y_multiplier
 		}
 	
-	if(graple_hold && can_control)
-	{
+	//check to see if player is pulled by grapple hook
+	if(graple_hold && can_control){
 		var arrow = instance_nearest(x,y,OBJ_Grappling_Hook_Arrow)	
-		if(arrow != noone)
-		{
-		if(!arrow.in_flight && !arrow.returning)
-		{
-			player_state = 2 //set movement state to grappling	
-		}
+		if(arrow != noone){
+			if(!arrow.in_flight && !arrow.returning){
+				player_state = 2 //set movement state to grappling	
+			}
 		}
 	}
+	
+	//tells the arrow to return to the player
 	if(graple_release && can_control){
 		var arrow = instance_nearest(x,y,OBJ_Grappling_Hook_Arrow)
-		if(arrow != noone)
-		{
+		if(arrow != noone){
 		arrow.returning = true
 		}
 	}
+	
+	//shooting
 	if(shoot && can_shoot && can_control){
-		
 		can_shoot = false
 		alarm[2] = .25 * game_get_speed(gamespeed_fps)
 		
@@ -214,107 +208,75 @@ case 0:
 	}
 		
 	//calculate gravity
-	if(wall_slide)
-	{
-		if(y_velocity > wall_slide_speed)
-		{
+	if(wall_slide){
+		if(y_velocity > wall_slide_speed){
 			y_velocity = wall_slide_speed
 		}
-		else if(y_velocity < 0)
-		{
+		else if(y_velocity < 0){
 			y_velocity = 0	
 		}
 		else{
 			y_velocity += OBJ_Game_Controller_Player.gravity
 		}
 	}
-	else if(y_velocity < max_fall_speed)
-	{
+	else if(y_velocity < max_fall_speed){
+		if(!grounded){
 		y_velocity += OBJ_Game_Controller_Player.gravity
+		}
 		
-		if(y_velocity > max_fall_speed)
-		{
+		if(y_velocity > max_fall_speed){
 			y_velocity = max_fall_speed	
 		}	
 	}
 		
 	//updates player's position
-	predicted_x = x+x_velocity
-	predicted_y = y+y_velocity
-
-	//x position
-	xcollison = instance_place(predicted_x,y,OBJ_Floor_Master)
-
-	if(xcollison == noone)
-		{
-			move_and_collide(x_velocity,0,OBJ_Floor_Master)
-		}
-	else
-		{
-			switch(xcollison.terrain_type)
-			{
-				case 0:
-				move_and_collide(x_velocity,0,OBJ_Floor_Master)
-				x_velocity = 0
-				break
-				
-				case 1:
-				x = predicted_x
-				break
-			}
-			
-		}
-
-	//y position
-	ycollison = instance_place(x,predicted_y,OBJ_Floor_Master)
-
-	if(ycollison == noone)
-	{
-		move_and_collide(0,y_velocity,OBJ_Floor_Master)
-	}
-	else
-	{
-		switch(ycollison.terrain_type)
-			{
-				case 0:
-				move_and_collide(0,y_velocity,OBJ_Floor_Master)
-				y_velocity = 0
-				grounded = true
-				falling = false
-				break
-				
-				case 1:
-				if (y_velocity >= 0)
-				{
-					var _platform = instance_place(x, y +y_velocity, OBJ_One_Way_Platform)
-					if (_platform != noone)
-					{
-						if (bbox_bottom <= _platform.bbox_top)
-						{
-	                       move_and_collide(0,y_velocity,OBJ_Floor_Master)
-							y_velocity = 0
-							can_dash = true
-							grounded = true
-							falling = false
-						}
-						else
-						{
-							y += y_velocity
-						}	
-					}
-
-				}
-				else
-				{
-					y += y_velocity
-				}
-				break
-			}
-	}
+	//predicted_x = x+x_velocity
+	//predicted_y = y+y_velocity
 	
-	//round numbers to prevent issues
+	var _move_count = abs(x_velocity);
+	var _move_once = sign(x_velocity);
+
+
+// This runs a loop, which runs 'move_count' times. All code in this block is repeated that many amount of times.
+repeat (_move_count){
+	var _collision_found = CollisonChecker(_move_once, 0);
+
+	// This checks if collision_found is false, meaning a collision was not found, and the player is free to move once on the X axis.
+	if (!_collision_found){
+		x += _move_once;
+	}
+	// This 'else' block runs if a collision was found.
+	else{
+		x_velocity = 0;
+		break;
+	}
+}
+
+// We now repeat all of the previous steps to check for collisions on the Y axis.
+var _move_count = abs(y_velocity);
+var _move_once = sign(y_velocity);
+
+// This runs a loop, which runs 'move_count' times. All actions attached to this are repeated that many amount of times.
+repeat (_move_count){
+	var _collision_found = CollisonChecker(0, _move_once);
+
+	// This checks if collision_found is false, meaning a collision was not found, and the player is free to move once on the Y axis.
+	if (!_collision_found){
+		// In that case, move_once is added to the Y coordinate of the character.
+		y += _move_once;
+	}
+	// This 'else' block runs if a collision was found.
+	else{
+		// In that case, we reset the Y velocity to 0, so the character stops its movement on that axis.
+		y_velocity = 0;
+		// Then we break out of the Repeat loop, as no more collision checks are required.
+		break;
+	}
+}
+	
 	y = round(y)
 	x = round(x)
+	
 	break;
 	
 	case 1: //dashing
@@ -329,8 +291,36 @@ case 0:
 	{
 		x_velocity = -dash_velocity
 	}
-	move_and_collide(x_velocity,0,OBJ_Floor_Master)
-	//round numbers to prevent issues
+	
+	var _move_count = abs(x_velocity);
+	var _move_once = sign(x_velocity);
+
+
+// This runs a loop, which runs 'move_count' times. All code in this block is repeated that many amount of times.
+repeat (_move_count)
+{
+	// This calls the check_collision function to check for collisions on the X axis, if moved by the move_once value on that dimension.
+	// The Y argument is set to 0, so for this collision there is no Y movement.
+	// The result of the function, either true or false, is stored in the 'collision_found' variable, which is temporary.
+	var _collision_found = CollisonChecker(_move_once, 0);
+
+	// This checks if collision_found is false, meaning a collision was not found, and the player is free to move once on the X axis.
+	if (!_collision_found)
+	{
+		// In that case, move_once is added to the X coordinate of the character.
+		x += _move_once;
+	}
+	// This 'else' block runs if a collision was found.
+	else
+	{
+		// In that case, we reset the X velocity to 0, so the character stops its movement on that axis.
+		x_velocity = 0;
+	
+		// Then we break out of the Repeat loop, as no more collision checks are required.
+		break;
+	}
+}
+
 	y = round(y)
 	x = round(x)
 	break;
@@ -362,46 +352,86 @@ case 0:
 		x_velocity = Player_grapling_velocity * x_multiplier
 		y_velocity = Player_grapling_velocity * y_multiplier
 
-		//updates player's position
-		 predicted_x = x+x_velocity
-		 predicted_y = y+y_velocity
+	var _move_count = abs(x_velocity);
+	var _move_once = sign(x_velocity);
 
-		//x position
-		xcollison = instance_place(predicted_x,y,OBJ_Floor_Master)
-		var xgrcollison = instance_place(predicted_x,y,OBJ_Grappling_Hook_Arrow)
 
-		if(xcollison != noone)
+// This runs a loop, which runs 'move_count' times. All code in this block is repeated that many amount of times.
+repeat (_move_count)
+{
+	// This calls the check_collision function to check for collisions on the X axis, if moved by the move_once value on that dimension.
+	// The Y argument is set to 0, so for this collision there is no Y movement.
+	// The result of the function, either true or false, is stored in the 'collision_found' variable, which is temporary.
+	var _collision_found = CollisonCheckerNoPlat(_move_once, 0);
+	
+	if(player_state != 3)
+	{
+		if(x < arrow.x+5 && x > arrow.x-5 && player_state != 3)
 		{
-			move_and_collide(x_velocity,0,OBJ_Floor_Master)
-			x_velocity = 0
-		}
-		else
-		{
-			move_and_collide(x_velocity,0,OBJ_Floor_Master)
-		}
-
-		//y position
-		ycollison = instance_place(x,predicted_y,OBJ_Floor_Master)
-		var ygrcollison = instance_place(x,predicted_y,OBJ_Grappling_Hook_Arrow)
-
-		if(ycollison != noone)
-		{
-			move_and_collide(0,y_velocity,OBJ_Floor_Master)
-			y_velocity = 0
-			grounded = true
-		}
-		else
-		{
-			move_and_collide(0,y_velocity,OBJ_Floor_Master)
-		}
 		
-		if(instance_place(x,y,OBJ_Grappling_Hook_Arrow))
-		{
-			move_and_collide(0,y_velocity,OBJ_Floor_Master)
-			move_and_collide(0,y_velocity,OBJ_Floor_Master)
 			instance_destroy(arrow)
+			//x_velocity = 0
+			//y_velocity = 0
 			player_state = 3
+			break
 		}
+	}
+	// This checks if collision_found is false, meaning a collision was not found, and the player is free to move once on the X axis.
+	if (!_collision_found)
+	{
+		// In that case, move_once is added to the X coordinate of the character.
+		x += _move_once;
+	}
+	// This 'else' block runs if a collision was found.
+	else
+	{
+		// In that case, we reset the X velocity to 0, so the character stops its movement on that axis.
+		x_velocity = 0;
+	
+		// Then we break out of the Repeat loop, as no more collision checks are required.
+		break;
+	}
+}
+
+// We now repeat all of the previous steps to check for collisions on the Y axis.
+// Everything is the same, but vel_x is replaced by vel_y, and the check_collision function takes a Y value (its second argument).
+var _move_count = abs(y_velocity);
+var _move_once = sign(y_velocity);
+
+// This runs a loop, which runs 'move_count' times. All actions attached to this are repeated that many amount of times.
+repeat (_move_count)
+{
+	// This calls the check_collision function to check for collisions on the Y axis, if moved by the move_once value.
+	// The result of the function, either true or false, is stored in the 'collision_found' variable, which is temporary.
+	var _collision_found = CollisonCheckerNoPlat(0, _move_once);
+
+	// This checks if collision_found is false, meaning a collision was not found, and the player is free to move once on the Y axis.
+	if(player_state != 3)
+	{
+		if(y < arrow.y+5 && y > arrow.y-5)
+		{
+			instance_destroy(arrow)
+			//x_velocity = 0
+			//y_velocity = 0
+			player_state = 3
+			break
+		}
+	}
+	if (!_collision_found)
+	{
+		// In that case, move_once is added to the Y coordinate of the character.
+		y += _move_once;
+	}
+	// This 'else' block runs if a collision was found.
+	else
+	{
+		// In that case, we reset the Y velocity to 0, so the character stops its movement on that axis.
+		y_velocity = 0;
+	
+		// Then we break out of the Repeat loop, as no more collision checks are required.
+		break;
+	}
+}
 		if(shoot && can_shoot){
 		
 		can_shoot = false

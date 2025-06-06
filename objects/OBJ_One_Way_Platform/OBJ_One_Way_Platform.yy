@@ -5,16 +5,13 @@
   "managed":true,
   "name":"OBJ_One_Way_Platform",
   "overriddenProperties":[
-    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"OBJ_Floor_Master","path":"objects/OBJ_Floor_Master/OBJ_Floor_Master.yy",},"propertyId":{"name":"terrain_type","path":"objects/OBJ_Floor_Master/OBJ_Floor_Master.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"1",},
+    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"OBJ_Colidable","path":"objects/OBJ_Colidable/OBJ_Colidable.yy",},"propertyId":{"name":"terrain_type","path":"objects/OBJ_Colidable/OBJ_Colidable.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"1",},
   ],
   "parent":{
     "name":"level_Geometrey",
     "path":"folders/Objects/level_Geometrey.yy",
   },
-  "parentObjectId":{
-    "name":"OBJ_Floor_Master",
-    "path":"objects/OBJ_Floor_Master/OBJ_Floor_Master.yy",
-  },
+  "parentObjectId":null,
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,

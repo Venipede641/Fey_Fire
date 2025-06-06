@@ -1,13 +1,16 @@
 {
   "$GMObject":"",
-  "%Name":"OBJ_Floor_Master",
-  "eventList":[],
+  "%Name":"OBJ_Game_Manager",
+  "eventList":[
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":4,"eventType":7,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+  ],
   "managed":true,
-  "name":"OBJ_Floor_Master",
+  "name":"OBJ_Game_Manager",
   "overriddenProperties":[],
   "parent":{
-    "name":"level_Geometrey",
-    "path":"folders/Objects/level_Geometrey.yy",
+    "name":"meta",
+    "path":"folders/Objects/meta.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -23,16 +26,11 @@
   "physicsShape":1,
   "physicsShapePoints":[],
   "physicsStartAwake":true,
-  "properties":[
-    {"$GMObjectProperty":"v1","%Name":"terrain_type","filters":[],"listItems":[],"multiselect":false,"name":"terrain_type","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"0","varType":0,},
-  ],
+  "properties":[],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":{
-    "name":"SPR_Floor_Temp",
-    "path":"sprites/SPR_Floor_Temp/SPR_Floor_Temp.yy",
-  },
+  "spriteId":null,
   "spriteMaskId":null,
   "visible":true,
 }

@@ -1,13 +1,13 @@
 {
   "$GMObject":"",
-  "%Name":"Object12",
+  "%Name":"OBJ_Colidable",
   "eventList":[],
   "managed":true,
-  "name":"Object12",
+  "name":"OBJ_Colidable",
   "overriddenProperties":[],
   "parent":{
-    "name":"meta",
-    "path":"folders/Objects/meta.yy",
+    "name":"level_Geometrey",
+    "path":"folders/Objects/level_Geometrey.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -23,11 +23,16 @@
   "physicsShape":1,
   "physicsShapePoints":[],
   "physicsStartAwake":true,
-  "properties":[],
+  "properties":[
+    {"$GMObjectProperty":"v1","%Name":"terrain_type","filters":[],"listItems":[],"multiselect":false,"name":"terrain_type","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"0","varType":0,},
+  ],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"SPR_Floor_Temp",
+    "path":"sprites/SPR_Floor_Temp/SPR_Floor_Temp.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

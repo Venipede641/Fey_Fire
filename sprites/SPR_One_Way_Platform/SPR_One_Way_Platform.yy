@@ -1,8 +1,8 @@
 {
   "$GMSprite":"",
   "%Name":"SPR_One_Way_Platform",
-  "bboxMode":1,
-  "bbox_bottom":127,
+  "bboxMode":0,
+  "bbox_bottom":14,
   "bbox_left":0,
   "bbox_right":127,
   "bbox_top":0,

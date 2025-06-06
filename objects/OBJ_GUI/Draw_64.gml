@@ -10,3 +10,4 @@ draw_text(50,200,"postdrag enable: \n" + string(OBJ_Player.post_dash_drag_enable
 draw_text(50,250,"animation state: \n" + string(OBJ_Game_Player_Animation_Handler.animation_state))
 draw_text(50,300,"player bbox bottem: \n" + string(OBJ_Player.bbox_bottom))
 draw_text(50,350,"player y: \n" + string(OBJ_Player.y))
+draw_text(50,400, "grounded " + string(OBJ_Player.grounded))
