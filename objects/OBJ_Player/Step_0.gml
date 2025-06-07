@@ -2,6 +2,7 @@
 
 //gather inputs
 var space = keyboard_check_pressed(vk_space)
+var spaceHold = keyboard_check(vk_space)
 var left = keyboard_check(ord("A"))
 var right = keyboard_check(ord("D"))
 var down = keyboard_check(ord("S"))
@@ -112,7 +113,7 @@ case 0:
 	//jumping
 	if(space && can_control){
 		if(wall_slide){
-			y_velocity = OBJ_Game_Controller_Player.player_jump_power
+			y_velocity = OBJ_Game_Controller_Player.wall_player_jump_power
 			x_velocity = wall_jump_velocity * wall_jump_direction
 			can_control = false
 			alarm[3] = .1 * game_get_speed(gamespeed_fps)
@@ -120,14 +121,26 @@ case 0:
 			wall_jump_direction = 0
 			can_dash = true
 		}
-		else if (grounded){ // [TO-DO, rewrite for a dynamic jump where you can short hop]
+		else if (grounded || soft_grounded){ // [TO-DO, rewrite for a dynamic jump where you can short hop]
 			if(down){
 				y += 1
 			}
-			else{
-				y_velocity += OBJ_Game_Controller_Player.player_jump_power
+			else if (soft_grounded)
+			{
+				jump_repeat_cur = jump_repeat_max
 			}
 		}
+	}
+	
+	if (!spaceHold)
+	{
+		jump_repeat_cur = 0
+	}
+	
+	if (jump_repeat_cur > 0)
+	{
+		jump_repeat_cur--
+		y_velocity =  OBJ_Game_Controller_Player.player_jump_power
 	}
 	
 	//dashing
@@ -220,8 +233,12 @@ case 0:
 		}
 	}
 	else if(y_velocity < max_fall_speed){
-		if(!grounded){
-		y_velocity += OBJ_Game_Controller_Player.gravity
+		if(!grounded && falling){
+			y_velocity += OBJ_Game_Controller_Player.gravity *1.5
+		}
+		else if(!grounded)
+		{
+			y_velocity += OBJ_Game_Controller_Player.gravity
 		}
 		
 		if(y_velocity > max_fall_speed){
@@ -328,15 +345,11 @@ repeat (_move_count)
 	case 2: //grappling
 	
 	var arrow = instance_nearest(x,y,OBJ_Grappling_Hook_Arrow)
-	if(!graple_hold) //if the player lets go of the key
-	{
+	if(!graple_hold){ //if the player lets go of the key
 		player_state =0	//return to normal movement
 		arrow.returning = true	
 	}
-	else
-	{
-		grounded = false
-		
+	else{		
 		var gy = arrow.y
 		var gx = arrow.x
 
@@ -357,17 +370,14 @@ repeat (_move_count)
 
 
 // This runs a loop, which runs 'move_count' times. All code in this block is repeated that many amount of times.
-repeat (_move_count)
-{
+repeat (_move_count){
 	// This calls the check_collision function to check for collisions on the X axis, if moved by the move_once value on that dimension.
 	// The Y argument is set to 0, so for this collision there is no Y movement.
 	// The result of the function, either true or false, is stored in the 'collision_found' variable, which is temporary.
 	var _collision_found = CollisonCheckerNoPlat(_move_once, 0);
 	
-	if(player_state != 3)
-	{
-		if(x < arrow.x+5 && x > arrow.x-5 && player_state != 3)
-		{
+	if(player_state != 3){
+		if(x < arrow.x+5 && x > arrow.x-5 && player_state != 3){
 		
 			instance_destroy(arrow)
 			//x_velocity = 0
@@ -377,14 +387,12 @@ repeat (_move_count)
 		}
 	}
 	// This checks if collision_found is false, meaning a collision was not found, and the player is free to move once on the X axis.
-	if (!_collision_found)
-	{
+	if (!_collision_found){
 		// In that case, move_once is added to the X coordinate of the character.
 		x += _move_once;
 	}
 	// This 'else' block runs if a collision was found.
-	else
-	{
+	else{
 		// In that case, we reset the X velocity to 0, so the character stops its movement on that axis.
 		x_velocity = 0;
 	
@@ -399,17 +407,14 @@ var _move_count = abs(y_velocity);
 var _move_once = sign(y_velocity);
 
 // This runs a loop, which runs 'move_count' times. All actions attached to this are repeated that many amount of times.
-repeat (_move_count)
-{
+repeat (_move_count){
 	// This calls the check_collision function to check for collisions on the Y axis, if moved by the move_once value.
 	// The result of the function, either true or false, is stored in the 'collision_found' variable, which is temporary.
 	var _collision_found = CollisonCheckerNoPlat(0, _move_once);
 
 	// This checks if collision_found is false, meaning a collision was not found, and the player is free to move once on the Y axis.
-	if(player_state != 3)
-	{
-		if(y < arrow.y+5 && y > arrow.y-5)
-		{
+	if(player_state != 3){
+		if(y < arrow.y+5 && y > arrow.y-5)	{
 			instance_destroy(arrow)
 			//x_velocity = 0
 			//y_velocity = 0
@@ -417,14 +422,12 @@ repeat (_move_count)
 			break
 		}
 	}
-	if (!_collision_found)
-	{
+	if (!_collision_found){
 		// In that case, move_once is added to the Y coordinate of the character.
 		y += _move_once;
 	}
 	// This 'else' block runs if a collision was found.
-	else
-	{
+	else{
 		// In that case, we reset the Y velocity to 0, so the character stops its movement on that axis.
 		y_velocity = 0;
 	
@@ -466,8 +469,7 @@ repeat (_move_count)
 	case 3:// wall hold, for holding place during grapple
 	x_velocity = 0
 	y_velocity = 0
-	if(!graple_hold) //if the player lets go of the key
-	{
+	if(!graple_hold){ //if the player lets go of the key
 		player_state =0	//return to normal movement
 		can_grapple = true
 	}
