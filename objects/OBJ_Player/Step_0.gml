@@ -6,6 +6,7 @@ var spaceHold = keyboard_check(vk_space)
 var left = keyboard_check(ord("A"))
 var right = keyboard_check(ord("D"))
 var down = keyboard_check(ord("S"))
+var haz_act = keyboard_check(ord("E"))
 var graple_start = keyboard_check_pressed(ord("Q"))
 var graple_hold = keyboard_check(ord("Q"))
 var graple_release = keyboard_check_released(ord("Q"))
@@ -17,13 +18,14 @@ var predicted_x
 var predicted_y
 var xcollison 
 var ycollison
+var nearHazard
 
 //get all hazards near the player and store them in a list
 var hazardList = ds_list_create();
-var hazardNum = collision_circle_list(x, y, hazard_interaction_range, hazard_master, false, true, hazardList, true);
+var hazardNum = collision_circle_list(x, y, hazard_interaction_range, OBJ_Hazard_master, false, true, hazardList, true);
 if (hazardNum > 0)
 {
-    var nearHazard = hazardList[|0]
+    nearHazard = hazardList[|0]
 	nearHazard.within_interaction_range = true
 	for (var i = 1; i < hazardNum; ++i;)
     {
@@ -41,73 +43,58 @@ if (hazardNum > 0)
 switch(player_state)
 {
 case 0:
-	if(x_velocity > max_move_speed) //if player is oving faster than they can walk I. E dashing or grapple, slow them down
-	{
-		if(post_dash_drag_enabled) //after dashing drag is higher to slow them down aftr the burst of speed
-		{
+	if(x_velocity > max_move_speed){ //if player is moving faster than they can walk I. E dashing or grapple, slow them down
+		if(post_dash_drag_enabled){ //after dashing drag is higher to slow them down aftr the burst of speed
 			x_velocity -= post_dash_drag
 		}
-		else //otherwise slow by normal
-		{	
+		else{ //otherwise slow by normal
 			x_velocity -= drag
 		}
 	}
-	else if (x_velocity < -max_move_speed)
-	{
-		if(post_dash_drag_enabled) //after dashing drag is higher to slow them down aftr the burst of speed
-		{
+	else if (x_velocity < -max_move_speed){
+		if(post_dash_drag_enabled){ //after dashing drag is higher to slow them down aftr the burst of speed
 			x_velocity += post_dash_drag
 		}
-		else //otherwise slow by normal
-		{	
+		else{ //otherwise slow by normal
 			x_velocity += drag
 		}
 	}
-	if(left && can_control) //start moveing player left
-	{
+	if(left && can_control){ //start moveing player left
 		x_velocity -= acceleration
-		if (x_velocity < -max_move_speed)
-		{
+		if (x_velocity < -max_move_speed){
 			x_velocity = -max_move_speed
 		}
 		facing = 0 //facing left
 	}
 
-	if(right && can_control) //start moving player right
-	{
+	if(right && can_control){ //start moving player right
 		x_velocity += acceleration
-		if (x_velocity > max_move_speed)
-		{
+		if (x_velocity > max_move_speed){
 			x_velocity = max_move_speed
 		}
 		facing = 1 //facing right
 	}
 
-	if(!right&&!left) //stop player if no movement key is held
-	{
+	if(!right&&!left){ //stop player if no movement key is held
 		
 		// [TO DO, CHANGE THIS TO A RAPID DECELERATION INSTEAD OF A FLAT STOP]
-		if(grounded)
-		{
+		if(grounded){
 			x_velocity = 0
 		}
 	}
 	
 	//wall jumps, if the player is close to a wall, enter a wall slide state where a wall jump can be inputed
-		if(CollisonChecker(-5,0) == true && !grounded && falling)
-		{
+		if(CollisonChecker(-5,0) == true && !grounded && falling)	{
 			wall_jump_direction = 1
-			wall_slide = 1
+			wall_slide = true
 		}
-		else if(CollisonChecker(5,0) == true && !grounded && falling)
-		{
+		else if(CollisonChecker(5,0) == true && !grounded && falling){
 			wall_jump_direction = -1
-			wall_slide = 1	
+			wall_slide = true
 		}
-		else
-		{
+		else{
 			wall_jump_direction = 0
-			wall_slide = 0
+			wall_slide = false
 		}
 
 	//jumping
@@ -125,21 +112,18 @@ case 0:
 			if(down){
 				y += 1
 			}
-			else if (soft_grounded)
-			{
+			else if (soft_grounded)	{
 				jump_repeat_cur = jump_repeat_max
 			}
 		}
 	}
 	
-	if (!spaceHold)
-	{
-		jump_repeat_cur = 0
+	if (!spaceHold){
+		jump_repeat_cur = 0 //stop upward momentum imediatly
 	}
 	
-	if (jump_repeat_cur > 0)
-	{
-		jump_repeat_cur--
+	if (jump_repeat_cur > 0){ //keeps player speed if jump held
+		jump_repeat_cur-- 
 		y_velocity =  OBJ_Game_Controller_Player.player_jump_power
 	}
 	
@@ -219,6 +203,17 @@ case 0:
 		bullet.x_velocity = bullet_velocity * x_multiplier
 		bullet.y_velocity = bullet_velocity * y_multiplier	
 	}
+	
+	//hazard activation
+	if(haz_act && can_control){
+		if (nearHazard != noone) //check if there are any hazards nearby
+		{
+			if(nearHazard.can_activate) //check if the nearest hazard is on cooldown
+			{
+				nearHazard.triggered =true	
+			}
+		}
+	}
 		
 	//calculate gravity
 	if(wall_slide){
@@ -246,10 +241,6 @@ case 0:
 		}	
 	}
 		
-	//updates player's position
-	//predicted_x = x+x_velocity
-	//predicted_y = y+y_velocity
-	
 	var _move_count = abs(x_velocity);
 	var _move_once = sign(x_velocity);
 

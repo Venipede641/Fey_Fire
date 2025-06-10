@@ -6,3 +6,13 @@ if(within_interaction_range)
 	    within_interaction_range = false
 	}	
 }
+if(triggered)
+{
+	//activation effect goes here
+	
+	
+	
+	//
+	alarm[0] =  cooldown_length * game_get_speed(gamespeed_fps) //cooldown
+	can_activate = false
+}
