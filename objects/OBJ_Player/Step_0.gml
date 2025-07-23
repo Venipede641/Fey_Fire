@@ -128,7 +128,7 @@ case 0:
 			can_dash = true
 		}
 		else if (grounded || soft_grounded){ // [TO-DO, rewrite for a dynamic jump where you can short hop]
-			if(down){
+			if(down_arrow){
 				y += 1
 			}
 			else if (soft_grounded)
