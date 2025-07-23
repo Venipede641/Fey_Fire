@@ -4,13 +4,19 @@
 var space = keyboard_check_pressed(vk_space)
 var spaceHold = keyboard_check(vk_space)
 var left = keyboard_check(ord("A"))
+var left_arrow = keyboard_check(vk_left)
 var right = keyboard_check(ord("D"))
+var right_arrow = keyboard_check(vk_right)
 var down = keyboard_check(ord("S"))
+var down_arrow = keyboard_check(vk_down)
+var up_arrow = keyboard_check(vk_up)
 var graple_start = keyboard_check_pressed(ord("Q"))
 var graple_hold = keyboard_check(ord("Q"))
 var graple_release = keyboard_check_released(ord("Q"))
 var shift = keyboard_check_pressed(vk_shift)
 var shoot = mouse_check_button(mb_left)
+var attack = mouse_check_button(ord("A"))
+
 
 //declare variables
 var predicted_x
@@ -63,7 +69,7 @@ case 0:
 			x_velocity += drag
 		}
 	}
-	if(left && can_control) //start moveing player left
+	if(left_arrow && can_control) //start moveing player left
 	{
 		x_velocity -= acceleration
 		if (x_velocity < -max_move_speed)
@@ -73,7 +79,7 @@ case 0:
 		facing = 0 //facing left
 	}
 
-	if(right && can_control) //start moving player right
+	if(right_arrow && can_control) //start moving player right
 	{
 		x_velocity += acceleration
 		if (x_velocity > max_move_speed)
@@ -83,7 +89,7 @@ case 0:
 		facing = 1 //facing right
 	}
 
-	if(!right&&!left) //stop player if no movement key is held
+	if(!right_arrow&&!left_arrow) //stop player if no movement key is held
 	{
 		
 		// [TO DO, CHANGE THIS TO A RAPID DECELERATION INSTEAD OF A FLAT STOP]
@@ -155,27 +161,46 @@ case 0:
 	//launch a grapple hook
 	if(graple_start && can_grapple && can_control){
 		can_grapple = false
-			
-		var gy = mouse_y
-		var gx = mouse_x
-
+		
 		var arrow = instance_create_layer(OBJ_Player.x,OBJ_Player.y,"instances",OBJ_Grappling_Hook_Arrow)
 		instance_create_layer(OBJ_Player.x,OBJ_Player.y,"instances",OBJ_Grapling_Rope)
 
-		var relative_x = gx-x
-		var relative_y = gy-y
-
-		var trajectory = point_direction(gx,gy,x,y)
-		var radiens = (trajectory - 90) * (pi/180)
-
+		//select angle for grappling hook
+		var angle = 0
+		if(left_arrow && down_arrow){
+			angle = 45
+		}
+		else if(right_arrow && down_arrow){
+			angle = 135
+		}
+		else if(right_arrow && up_arrow){
+			angle = 225
+		}
+		else if(left_arrow && up_arrow){
+			angle = 315
+		}
+		else if(left_arrow){
+			angle = 0
+		}
+		else if(down_arrow){
+			angle = 90
+		}
+		else if(right_arrow){
+			angle = 180
+		}
+		else if(up_arrow){
+			angle = 270
+		}
+		var radiens = (angle - 90) * (pi/180)
 		var x_multiplier = sin(radiens)
 		var y_multiplier = cos(radiens)
-
-		arrow.direction = trajectory
+		
+		arrow.direction = angle
 		arrow.image_angle = arrow.direction -270
 		arrow.x_velocity = Grapling_hook_velocity * x_multiplier
 		arrow.y_velocity = Grapling_hook_velocity * y_multiplier
-		}
+		
+	}
 	
 	//check to see if player is pulled by grapple hook
 	if(graple_hold && can_control){
@@ -193,31 +218,6 @@ case 0:
 		if(arrow != noone){
 		arrow.returning = true
 		}
-	}
-	
-	//shooting
-	if(shoot && can_shoot && can_control){
-		can_shoot = false
-		alarm[2] = .25 * game_get_speed(gamespeed_fps)
-		
-		var gy = mouse_y
-		var gx = mouse_x
-
-		var bullet = instance_create_layer(OBJ_Player.x,OBJ_Player.y,"instances",OBJ_Bullet)
-
-		var relative_x = gx-x
-		var relative_y = gy-y
-
-		var trajectory = point_direction(gx,gy,x,y)
-		var radiens = (trajectory - 90) * (pi/180)
-
-		var x_multiplier = sin(radiens)
-		var y_multiplier = cos(radiens)
-
-		bullet.direction = trajectory
-		bullet.image_angle = bullet.direction -180
-		bullet.x_velocity = bullet_velocity * x_multiplier
-		bullet.y_velocity = bullet_velocity * y_multiplier	
 	}
 		
 	//calculate gravity
@@ -435,30 +435,6 @@ repeat (_move_count){
 		break;
 	}
 }
-		if(shoot && can_shoot){
-		
-		can_shoot = false
-		alarm[2] = .25 * game_get_speed(gamespeed_fps)
-		
-		var gy = mouse_y
-		var gx = mouse_x
-
-		var bullet = instance_create_layer(OBJ_Player.x,OBJ_Player.y,"instances",OBJ_Bullet)
-
-		relative_x = gx-x
-		relative_y = gy-y
-
-		trajectory = point_direction(gx,gy,x,y)
-		radiens = (trajectory - 90) * (pi/180)
-
-		x_multiplier = sin(radiens)
-		y_multiplier = cos(radiens)
-
-		bullet.direction = trajectory
-		bullet.image_angle = bullet.direction -180
-		bullet.x_velocity = bullet_velocity * x_multiplier
-		bullet.y_velocity = bullet_velocity * y_multiplier	
-		}
 		
 	}
 	//round numbers to prevent issues
