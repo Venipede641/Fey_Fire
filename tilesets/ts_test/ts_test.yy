@@ -8,7 +8,7 @@
     "TileSerialiseData":[],
   },
   "name":"ts_test",
-  "out_columns":2,
+  "out_columns":4,
   "out_tilehborder":2,
   "out_tilevborder":2,
   "parent":{
@@ -18,8 +18,8 @@
   "resourceType":"GMTileSet",
   "resourceVersion":"2.0",
   "spriteId":{
-    "name":"SPR_Floor_Temp",
-    "path":"sprites/SPR_Floor_Temp/SPR_Floor_Temp.yy",
+    "name":"SPR_Tile_DirtTest",
+    "path":"sprites/SPR_Tile_DirtTest/SPR_Tile_DirtTest.yy",
   },
   "spriteNoExport":false,
   "textureGroupId":{
@@ -28,11 +28,11 @@
   },
   "tileAnimationFrames":[],
   "tileAnimationSpeed":15.0,
-  "tileHeight":64,
+  "tileHeight":32,
   "tilehsep":0,
   "tilevsep":0,
-  "tileWidth":64,
+  "tileWidth":32,
   "tilexoff":0,
   "tileyoff":0,
-  "tile_count":4,
+  "tile_count":16,
 }

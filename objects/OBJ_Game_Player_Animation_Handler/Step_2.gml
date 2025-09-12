@@ -2,13 +2,28 @@
 
 var player = instance_nearest(x,y,OBJ_Player)
 
+if(player.facing == 1){
+	 player.image_xscale = 1	
+}
+else{
+	player.image_xscale = -1	
+}
+
 if(player != noone)
 {
 	switch(animation_state)
 	{
-		//insert animations as you get them	
+		//insert animations as you get them
+		case 0:
+		player.sprite_index = SPR_Jade_Idle
+		break
+		
+		case 1:
+		player.sprite_index = SPR_Jade_run
+		break
+		
 		default:
-		player.image_index = SPR_Player_Temp
+		player.sprite_index = SPR_Player_Temp
 		break
 
 	}

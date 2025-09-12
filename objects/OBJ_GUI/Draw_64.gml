@@ -11,3 +11,4 @@ draw_text(50,250,"animation state: \n" + string(OBJ_Game_Player_Animation_Handle
 draw_text(50,300,"player bbox bottem: \n" + string(OBJ_Player.bbox_bottom))
 draw_text(50,350,"player y: \n" + string(OBJ_Player.y))
 draw_text(50,400, "grounded " + string(OBJ_Player.grounded))
+draw_text(50,450, "soft_grounded " + string(OBJ_Player.soft_grounded))
