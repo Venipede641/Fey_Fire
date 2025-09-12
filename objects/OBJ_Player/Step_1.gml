@@ -20,6 +20,7 @@ grounded = CollisonChecker(0,1)
 if(grounded == true)
 {
 	soft_grounded = true
+	soft_grounded_flag = false
 	can_dash = true
 	jump_repeat_cur = 0
 }

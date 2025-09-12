@@ -47,7 +47,7 @@ if (hazardNum > 0)
 switch(player_state)
 {
 case 0:
-	if(x_velocity > max_move_speed) //if player is oving faster than they can walk I. E dashing or grapple, slow them down
+	if(x_velocity > max_move_speed) //if player is moving faster than they can walk I. E dashing or grapple, slow them down
 	{
 		if(post_dash_drag_enabled) //after dashing drag is higher to slow them down aftr the burst of speed
 		{
@@ -118,18 +118,20 @@ case 0:
 
 	//jumping
 	if(space && can_control){
-		if(wall_slide){
-			y_velocity = OBJ_Game_Controller_Player.wall_player_jump_power
-			x_velocity = wall_jump_velocity * wall_jump_direction
+		if(wall_slide){ //if currently sliding down a wall, wall jump off
+			y_velocity = OBJ_Game_Controller_Player.wall_player_jump_power //assign the correct y momentum
+			x_velocity = wall_jump_velocity * wall_jump_direction //assign x momentum in the correct direction
 			can_control = false
-			alarm[3] = .1 * game_get_speed(gamespeed_fps)
-			wall_slide = 0
+			alarm[3] = .1 * game_get_speed(gamespeed_fps) //takes control away from player for a breif moment
+			wall_slide = 0 //no longer wall sliding now
 			wall_jump_direction = 0
-			can_dash = true
+			can_dash = true //refresh dash
 		}
-		else if (grounded || soft_grounded){ // [TO-DO, rewrite for a dynamic jump where you can short hop]
-			if(down_arrow){
-				y += 1
+		else if (grounded || soft_grounded){
+			if(down_arrow ){ // passthrough oneway platforms if above one
+				if(place_meeting(x,y+1,OBJ_One_Way_Platform)){
+					y += 1
+				}
 			}
 			else if (soft_grounded)
 			{
@@ -138,15 +140,18 @@ case 0:
 		}
 	}
 	
-	if (!spaceHold)
+	if (!spaceHold) //if not holding space, stop adding speed upwards
 	{
 		jump_repeat_cur = 0
 	}
-	
-	if (jump_repeat_cur > 0)
+	//if( jump_repeat_cur > jump_repeat_max -2)
+	//{
+	//	jump_repeat_cur--
+	//}
+	else if (jump_repeat_cur > 0)
 	{
 		jump_repeat_cur--
-		y_velocity =  OBJ_Game_Controller_Player.player_jump_power
+		y_velocity =  OBJ_Game_Controller_Player.player_jump_power_rep
 	}
 	
 	//dashing
@@ -246,10 +251,6 @@ case 0:
 		}	
 	}
 		
-	//updates player's position
-	//predicted_x = x+x_velocity
-	//predicted_y = y+y_velocity
-	
 	var _move_count = abs(x_velocity);
 	var _move_once = sign(x_velocity);
 

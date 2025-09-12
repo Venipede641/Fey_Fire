@@ -4,9 +4,7 @@
   "eventList":[],
   "managed":true,
   "name":"OBJ_One_Way_Platform",
-  "overriddenProperties":[
-    {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"OBJ_Colidable","path":"objects/OBJ_Colidable/OBJ_Colidable.yy",},"propertyId":{"name":"terrain_type","path":"objects/OBJ_Colidable/OBJ_Colidable.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"1",},
-  ],
+  "overriddenProperties":[],
   "parent":{
     "name":"level_Geometrey",
     "path":"folders/Objects/level_Geometrey.yy",
