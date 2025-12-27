@@ -1,5 +1,7 @@
 /// @description handles player movement
 
+//facing 0 = left and facing 1 = right
+
 //gather inputs
 var space = keyboard_check_pressed(vk_space)
 var spaceHold = keyboard_check(vk_space)
@@ -17,7 +19,7 @@ var graple_release = keyboard_check_released(ord("Q"))
 var shift = keyboard_check_pressed(vk_shift)
 var shoot = mouse_check_button(mb_left)
 var attack = mouse_check_button(ord("A"))
-
+var dive = keyboard_check_pressed(vk_control)
 
 //declare variables
 var predicted_x
@@ -25,6 +27,7 @@ var predicted_y
 var xcollison 
 var ycollison
 var nearHazard
+var dive_speed
 
 //get all hazards near the player and store them in a list
 var hazardList = ds_list_create();
@@ -85,10 +88,17 @@ case 0:
 
 	if(!right_arrow&&!left_arrow) //stop player if no movement key is held
 	{
-		
-		// [TO DO, CHANGE THIS TO A RAPID DECELERATION INSTEAD OF A FLAT STOP]
-		if(grounded){
-			x_velocity = 0
+		if (facing == 1){ 
+			x_velocity -= 10	
+			if(x_velocity < 0){
+				x_velocity = 0	
+			}
+		}
+		else if(facing == 0){
+			x_velocity += 10	
+			if(x_velocity > 0){
+				x_velocity = 0	
+			}
 		}
 	}
 	
@@ -133,10 +143,7 @@ case 0:
 	{
 		jump_repeat_cur = 0
 	}
-	//if( jump_repeat_cur > jump_repeat_max -2)
-	//{
-	//	jump_repeat_cur--
-	//}
+
 	else if (jump_repeat_cur > 0)
 	{
 		jump_repeat_cur--
@@ -213,6 +220,18 @@ case 0:
 		arrow.returning = true
 		}
 	}
+	
+	//checks to see if we should dive
+	if(dive && can_control){ //if true, iniates a dive
+		player_state=4
+		if(facing == 0){
+			dive_speed = -50	
+		}
+		else if(facing == 1){
+			dive_speed = 50
+		}
+		y_velocity = -5
+	}
 		
 	//calculate gravity
 	if(wall_slide){
@@ -226,8 +245,8 @@ case 0:
 			y_velocity += OBJ_Game_Controller_Player.gravity
 		}
 	}
-	else if(y_velocity < max_fall_speed){
-		if(!grounded && falling){
+	else if(y_velocity < max_fall_speed){ //if not a terminal velocity, then the fall is hastened
+		if(!grounded && falling){// gravity is stronger when falling
 			y_velocity += OBJ_Game_Controller_Player.gravity *1.5
 		}
 		else if(!grounded)
@@ -467,6 +486,96 @@ repeat (_move_count){
 	y = round(y)
 	x = round(x)
 	break
+	
+	case 4: //diving
+	
+	//movement stuff...
+	if(dive_speed > 25 && facing == 1){ // check if to decelerate the dive
+		if(right_arrow){
+			dive_speed -= dive_deceleration * 1.25
+		}
+		else if(left_arrow){
+			dive_speed -= dive_deceleration * .75
+		}
+		else{
+			dive_speed -= dive_deceleration	
+		}
+	}
+	else if(dive_speed < -25 && facing == 0){
+		if(right_arrow){
+			dive_speed += dive_deceleration * 1.25
+		}
+		else if(left_arrow){
+			dive_speed += dive_deceleration * .75
+		}
+		else{
+			dive_speed += dive_deceleration
+		}
+	}
+	if(dive_speed < 25 && facing == 1){
+		dive_speed = 25	
+	}
+	else if(dive_speed > -25 && facing == 0){
+		dive_speed = -25	
+	}
+	
+	x_velocity = dive_speed
+	
+	if(y_velocity < max_fall_speed){ //if not a terminal velocity, then the fall is hastened
+		y_velocity += OBJ_Game_Controller_Player.gravity
+	}
+	if(y_velocity > max_fall_speed){
+		y_velocity = max_fall_speed	
+	}
+	
+	var _move_count = abs(x_velocity);
+	var _move_once = sign(x_velocity);
+
+	
+// This runs a loop, which runs 'move_count' times. All code in this block is repeated that many amount of times.
+repeat (_move_count){
+	var _collision_found = CollisonChecker(_move_once, 0);
+
+	// This checks if collision_found is false, meaning a collision was not found, and the player is free to move once on the X axis.
+	if (!_collision_found){
+		x += _move_once;
+	}
+	// This 'else' block runs if a collision was found.
+	else{
+		x_velocity = 0;
+		break;
+	}
 }
 
+//execute move
+var _move_count = abs(y_velocity);
+var _move_once = sign(y_velocity);
+
+// This runs a loop, which runs 'move_count' times. All actions attached to this are repeated that many amount of times.
+repeat (_move_count){
+	var _collision_found = CollisonChecker(0, _move_once);
+
+	// This checks if collision_found is false, meaning a collision was not found, and the player is free to move once on the Y axis.
+	if (!_collision_found){
+		// In that case, move_once is added to the Y coordinate of the character.
+		y += _move_once;
+	}
+	// This 'else' block runs if a collision was found.
+	else{
+		// In that case, we reset the Y velocity to 0, so the character stops its movement on that axis.
+		y_velocity = 0;
+		// Then we break out of the Repeat loop, as no more collision checks are required.
+		break;
+	}
+}
+	
+	if(space){ //intiate a dive cancel
+		player_state = 0 //reset back to nuetral state
+		//do a jump
+		jump_repeat_cur = jump_repeat_max
+		y_velocity =  OBJ_Game_Controller_Player.player_jump_power_rep
+	}
+	break
+	
+}
 ds_list_destroy(hazardList); //delete list to prevent memory leaks
