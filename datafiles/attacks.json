@@ -1,0 +1,24 @@
+{
+    "jab": {
+        "total_frames": 20,
+        "hitboxes": [
+            {
+                "frame_start": 3, "frame_end": 6,
+                "x": 20, "y": -30, "w": 40, "h": 30, "shape": "rect",
+                "damage": 5, "base_kb": 20, "kb_growth": 50,
+                "kb_angle": 361, "hitstun": 8, "hit_id": 101
+            }
+        ]
+    },
+    "forward_smash": {
+        "total_frames": 45,
+        "hitboxes": [
+            {
+                "frame_start": 14, "frame_end": 18,
+                "x": 10, "y": -40, "w": 70, "h": 50, "shape": "rect",
+                "damage": 18, "base_kb": 80, "kb_growth": 90,
+                "kb_angle": 40, "hitstun": 0, "hit_id": 201
+            }
+        ]
+    }
+}

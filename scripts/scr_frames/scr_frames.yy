@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"AttackHandler",
+  "%Name":"scr_frames",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"AttackHandler",
+  "name":"scr_frames",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Player_Helpers",
+    "path":"folders/Scripts/Player_Helpers.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_hitbox_create",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_hitbox_create",
+  "parent":{
+    "name":"Hitboxes",
+    "path":"folders/Scripts/Hitboxes.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

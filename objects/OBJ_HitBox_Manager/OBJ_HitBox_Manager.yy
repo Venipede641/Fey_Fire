@@ -1,15 +1,16 @@
 {
   "$GMObject":"",
-  "%Name":"OBJ_Grapling_Rope",
+  "%Name":"OBJ_HitBox_Manager",
   "eventList":[
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"OBJ_Grapling_Rope",
+  "name":"OBJ_HitBox_Manager",
   "overriddenProperties":[],
   "parent":{
-    "name":"Player_Objects",
-    "path":"folders/Objects/Player_Objects.yy",
+    "name":"Hitboxes",
+    "path":"folders/Objects/Hitboxes.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -29,10 +30,7 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":{
-    "name":"SPR_Grapling_Rope",
-    "path":"sprites/SPR_Grapling_Rope/SPR_Grapling_Rope.yy",
-  },
+  "spriteId":null,
   "spriteMaskId":null,
   "visible":true,
 }

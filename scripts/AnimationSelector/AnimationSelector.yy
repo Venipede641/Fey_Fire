@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"AnimationSelector",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Player_Helpers",
+    "path":"folders/Scripts/Player_Helpers.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

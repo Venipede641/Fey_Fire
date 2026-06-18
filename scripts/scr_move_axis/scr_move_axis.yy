@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_move_axis",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_move_axis",
+  "parent":{
+    "name":"Player_Helpers",
+    "path":"folders/Scripts/Player_Helpers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
