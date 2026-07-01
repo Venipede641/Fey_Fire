@@ -7,7 +7,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"Enemy",
-    "path":"folders/Objects/Entities/Enemy.yy",
+    "path":"folders/Objects/entities/Enemy.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -25,7 +25,7 @@
   "physicsStartAwake":true,
   "properties":[
     {"$GMObjectProperty":"v2","%Name":"health","filters":[],"listItems":[],"multiselect":false,"name":"health","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"0.0","varType":0,},
-    {"$GMObjectProperty":"v2","%Name":"in_knockback_stun","filters":[],"listItems":[],"multiselect":false,"name":"in_knockback_stun","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"False","varType":3,},
+    {"$GMObjectProperty":"v2","%Name":"in_hitstun","filters":[],"listItems":[],"multiselect":false,"name":"in_hitstun","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"False","varType":3,},
     {"$GMObjectProperty":"v2","%Name":"xspeed","filters":[],"listItems":[],"multiselect":false,"name":"xspeed","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"0.0","varType":0,},
     {"$GMObjectProperty":"v2","%Name":"yspeed","filters":[],"listItems":[],"multiselect":false,"name":"yspeed","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"0.0","varType":0,},
     {"$GMObjectProperty":"v2","%Name":"k_xspeed","filters":[],"listItems":[],"multiselect":false,"name":"k_xspeed","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"0.0","varType":0,},

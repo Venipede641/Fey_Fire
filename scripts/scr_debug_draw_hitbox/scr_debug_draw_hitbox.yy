@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"Macros",
+  "%Name":"scr_debug_draw_hitbox",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"Macros",
+  "name":"scr_debug_draw_hitbox",
   "parent":{
-    "name":"Macros",
-    "path":"folders/Scripts/Macros.yy",
+    "name":"Hitboxes",
+    "path":"folders/Scripts/Hitboxes.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

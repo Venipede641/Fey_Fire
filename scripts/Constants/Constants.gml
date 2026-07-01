@@ -5,6 +5,7 @@
 #macro STATE_NORMAL 0
 #macro STATE_DASH   1
 #macro STATE_DIVE   2
+#macro STATE_ATTACK 3
 
 // ── Facing ───────────────────────────────────────────────────────────────────
 #macro FACING_LEFT  0

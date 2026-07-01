@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_start_attack",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_start_attack",
+  "parent":{
+    "name":"Player_Helpers",
+    "path":"folders/Scripts/Player_Helpers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

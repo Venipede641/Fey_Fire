@@ -4,7 +4,7 @@
 /// Requires: scr_constants, scr_frames, scr_move_axis
 ///
 /// player_state values → see scr_constants:
-///   STATE_NORMAL (0), STATE_DASH (1), STATE_DIVE (2)
+///   STATE_NORMAL (0), STATE_DASH (1), STATE_DIVE (2), STATE_ATTACK(3)
 
 // ── Input ─────────────────────────────────────────────────────────────────────
 var space      = keyboard_check_pressed(vk_space);
@@ -50,16 +50,16 @@ case STATE_NORMAL:
     // Directional input — accelerate, clamp to walk speed, update facing.
     if (left_arrow && can_control) {
         x_velocity = max(x_velocity - acceleration, -max_move_speed);
-        facing     = FACING_LEFT;
+        self.facing     = FACING_LEFT;
     }
     if (right_arrow && can_control) {
         x_velocity = min(x_velocity + acceleration, max_move_speed);
-        facing     = FACING_RIGHT;
+        self.facing     = FACING_RIGHT;
     }
 
     // No horizontal input — apply ground friction toward zero.
     if (!right_arrow && !left_arrow) {
-        if (facing == FACING_RIGHT) {
+        if (self.facing == FACING_RIGHT) {
             x_velocity = max(x_velocity - GROUND_DECEL, 0);
         } else {
             x_velocity = min(x_velocity + GROUND_DECEL, 0);
@@ -118,7 +118,7 @@ case STATE_NORMAL:
     // Dive — launch horizontally in facing direction.
     if (dive && can_control) {
         player_state = STATE_DIVE;
-        dive_speed   = (facing == FACING_RIGHT) ? DIVE_SPEED_MAX : -DIVE_SPEED_MAX;
+        dive_speed   = (self.facing == FACING_RIGHT) ? DIVE_SPEED_MAX : -DIVE_SPEED_MAX;
         y_velocity   = DIVE_LAUNCH_Y;
     }
 
@@ -149,7 +149,7 @@ case STATE_DASH:
 
     // Dash cancels vertical momentum and moves at a fixed speed.
     y_velocity = 0;
-    x_velocity = (facing == FACING_RIGHT) ? dash_velocity : -dash_velocity;
+    x_velocity = (self.facing == FACING_RIGHT) ? dash_velocity : -dash_velocity;
 
     x_velocity = scr_move_axis(x_velocity, false, true);
 
@@ -163,19 +163,19 @@ case STATE_DIVE:
 // ─────────────────────────────────────────────────────────────────────────────
 
     // Decelerate the dive — directional input adjusts the rate.
-    if (dive_speed > DIVE_SPEED_MIN && facing == FACING_RIGHT) {
+    if (dive_speed > DIVE_SPEED_MIN && self.facing == FACING_RIGHT) {
         if      (right_arrow) dive_speed -= dive_deceleration * DIVE_DECEL_WITH;
         else if (left_arrow)  dive_speed -= dive_deceleration * DIVE_DECEL_AGAINST;
         else                  dive_speed -= dive_deceleration;
-    } else if (dive_speed < -DIVE_SPEED_MIN && facing == FACING_LEFT) {
+    } else if (dive_speed < -DIVE_SPEED_MIN && self.facing == FACING_LEFT) {
         if      (right_arrow) dive_speed += dive_deceleration * DIVE_DECEL_WITH;
         else if (left_arrow)  dive_speed += dive_deceleration * DIVE_DECEL_AGAINST;
         else                  dive_speed += dive_deceleration;
     }
 
     // Clamp — dive never slows below the minimum speed.
-    if      (dive_speed < DIVE_SPEED_MIN  && facing == FACING_RIGHT) dive_speed =  DIVE_SPEED_MIN;
-    else if (dive_speed > -DIVE_SPEED_MIN && facing == FACING_LEFT)  dive_speed = -DIVE_SPEED_MIN;
+    if      (dive_speed < DIVE_SPEED_MIN  && self.facing == FACING_RIGHT) dive_speed =  DIVE_SPEED_MIN;
+    else if (dive_speed > -DIVE_SPEED_MIN && self.facing == FACING_LEFT)  dive_speed = -DIVE_SPEED_MIN;
 
     x_velocity = dive_speed;
 
@@ -193,6 +193,41 @@ case STATE_DIVE:
         y_velocity      = OBJ_Game_Controller_Player.player_jump_power_rep;
     }
     break;
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+case  STATE_ATTACK:
+// ─────────────────────────────────────────────────────────────────────────────
+ attack_frame++;
+
+    var atk      = global.attack_data[$ current_attack];
+    var hb_defs  = atk[$ "hitboxes"];
+    var hb_count = array_length(hb_defs);
+
+    // Spawn hitboxes when their active window opens
+    for (var i = 0; i < hb_count; i++) {
+        var def = hb_defs[i];
+
+        if (attack_frame >= def[$ "frame_start"]
+        &&  attack_frame <= def[$ "frame_end"]
+        && !attack_hb_spawned[i]) {
+
+            // Flip X offsets based on facing direction
+            var facing  = image_xscale >= 0 ? 1 : -1;
+            var flipped = scr_flip_hitbox_def(def, facing);
+
+            var hb = new Hitbox(self, flipped);
+            obj_hitbox_manager.register_hitbox(hb);
+            attack_hb_spawned[i] = true;
+        }
+    }
+
+    // Attack finished
+    if (attack_frame >= atk[$ "total_frames"]) {
+        state          = STATE.IDLE;
+        current_attack = "";
+    }
+	break;
 
 } // end switch
 
